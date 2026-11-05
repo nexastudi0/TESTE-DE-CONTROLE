@@ -1,0 +1,54 @@
+{
+  "id": "./",
+  "name": "Nexa Vet Control",
+  "short_name": "Nexa Vet",
+  "description": "Controle de serviços de profissionais PJ e pagamentos da clínica veterinária.",
+  "start_url": "./?source=pwa",
+  "scope": "./",
+  "display": "standalone",
+  "display_override": [
+    "standalone"
+  ],
+  "orientation": "any",
+  "background_color": "#080a0e",
+  "theme_color": "#080a0e",
+  "lang": "pt-BR",
+  "categories": [
+    "business",
+    "productivity"
+  ],
+  "icons": [
+    {
+      "src": "assets/icon-192.png",
+      "type": "image/png",
+      "sizes": "192x192",
+      "purpose": "any"
+    },
+    {
+      "src": "assets/icon-512.png",
+      "type": "image/png",
+      "sizes": "512x512",
+      "purpose": "any"
+    },
+    {
+      "src": "assets/icon-maskable-512.png",
+      "type": "image/png",
+      "sizes": "512x512",
+      "purpose": "maskable"
+    }
+  ],
+  "shortcuts": [
+    {
+      "name": "Abrir sistema",
+      "short_name": "Início",
+      "url": "./?source=pwa",
+      "icons": [
+        {
+          "src": "assets/icon-192.png",
+          "type": "image/png",
+          "sizes": "192x192"
+        }
+      ]
+    }
+  ]
+}

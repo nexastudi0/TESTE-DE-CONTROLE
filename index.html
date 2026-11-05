@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+  <meta name="theme-color" content="#080a0e" />
+  <meta name="color-scheme" content="dark" />
+  <meta name="mobile-web-app-capable" content="yes" />
+  <meta name="application-name" content="Nexa Vet Control" />
+  <meta name="apple-mobile-web-app-title" content="Nexa Vet" />
+  <meta name="format-detection" content="telephone=no" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+  <link rel="manifest" href="manifest.webmanifest" />
+  <link rel="apple-touch-icon" sizes="180x180" href="assets/icon-180.png" />
+  <link rel="icon" sizes="192x192" href="assets/icon-192.png" type="image/png" />
+  <meta name="description" content="Nexa Vet Control — gestão segura de registros de serviços, profissionais PJ e pagamentos." />
+  <title>Nexa Vet Control | Plataforma Administrativa</title>
+  <link rel="icon" href="assets/favicon.svg" type="image/svg+xml" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Outfit:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="styles.css" />
+  <script src="config.js"></script>
+  <script defer src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
+  <script defer src="demo.js"></script>
+  <script defer src="app.js"></script>
+</head>
+<body>
+  <div id="splash" class="splash" aria-hidden="true">
+    <div class="splash-glow"></div>
+    <div class="splash-content"><div class="brand-mark splash-mark">N<span>×</span></div><div class="splash-name">NEXA <span>STUDIO</span></div><div class="splash-sub">TECNOLOGIA QUE TRANSFORMA</div><div class="splash-loading"><i></i></div></div>
+  </div>
+  <div id="app" aria-live="polite"></div>
+  <div id="toast-area" aria-live="assertive"></div>
+  <div id="connection-banner" role="status" aria-live="polite" hidden></div>
+  <div id="modal-root"></div>
+</body>
+</html>
