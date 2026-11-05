@@ -1,169 +1,91 @@
-# Nexa Vet Control v1.2 — Instalável em celular e tablet (PWA)
+# NEXA VET CONTROL 2.0 — HORAS ADICIONAIS
 
-# NEXA VET CONTROL v1.1 — plataforma de serviços e pagamentos PJ
+**Nova finalidade:** controlar SOMENTE pedidos de horas adicionais de serviços realizados por profissionais PJ. Este projeto **não registra ponto**, não registra jornada diária, não usa PIN, câmera, fotos ou terminal de recepção.
 
-Sistema web independente da Nexa Studio, com design responsivo em preto e dourado, tela de abertura animada, autenticação, painel da clínica, terminal de PIN + foto, histórico de prestação de serviços e fechamento financeiro.
+## Funcionalidades incluídas
 
-## 1. O que está incluído
+**Profissionais:** login pessoal, troca obrigatória de senha no primeiro acesso, novo pedido de horas adicionais com início e fim e **motivo obrigatório (mínimo 15 caracteres)**; histórico próprio, acompanhamento de pendência, aprovação ou recusa, sem acesso aos valores de outros usuários nem à tarifa individual.
 
-- **Proprietária e administrativo:** logins individuais com **as mesmas permissões** operacionais, visualização de horas, relatórios, valores, ajustes e aprovações.
-- **Profissionais PJ:** a clínica cria os logins, senhas temporárias e PINs de 6 números; cada profissional altera a própria senha no primeiro acesso e pode consultar seus registros e comunicar divergências (mas não corrigir horas).
-- **Registro pelo login pessoal:** nova opção **Registrar ponto** no menu de cada profissional. Digita o próprio PIN, fotografa ao vivo e confirma entrada/saída. **Esses registros ficam pendentes de conferência administrativa após a saída e não entram no pagamento antes da validação pelas câmeras.** É uma alternativa de registro, mas **não comprova presença física**: pode ser usada fora da clínica, portanto usar preferencialmente o terminal fixo.
-- **Terminal da recepção:** login exclusivo no celular fixo. Cada profissional digita PIN e tira uma **foto ao vivo** na entrada e na saída. O servidor define data/hora; não se pode enviar foto da galeria pela interface.
-- **Conferência:** ajustes manuais de horários exigem justificativa, ficam pendentes e só entram no cálculo após confirmação administrativa da conferência das câmeras. Há trilha de auditoria com dados anteriores e posteriores.
-- **Financeiro:** a clínica informa a tarifa horária individual e escolhe o dia de fechamento. Cada registro mantém uma cópia do valor/hora aplicado; aprovações têm horário e usuário identificados. Períodos ainda abertos não podem ser aprovados no backend.
-- **Relatórios:** painel geral, histórico por profissional, cálculo por fechamento, exportação CSV e impressão em PDF pelo navegador.
-- **Proteção no backend:** autenticação Supabase Auth, função autorizadora no servidor, isolamento via RLS nas tabelas, fotos em bucket privado, limite de tentativas do PIN, registro de auditoria e bloqueio de períodos aprovados.
+**Proprietária e financeiro:** logins separados com a mesma permissão administrativa; cadastro/inativação de prestadores, valores/hora individuais, criação e redefinição de credenciais, aprovação/recusa dos pedidos, correções justificadas e auditadas, filtros, relatórios, CSV, impressão em PDF, dia de fechamento configurável (de 1 a 28) e aprovação da apuração mensal por profissional. O cálculo considera **apenas pedidos aprovados**. A tarifa da solicitação fica congelada no instante do pedido; alterações posteriores de tarifa não recalculam o passado.
 
-**Atenção:** o projeto contém uma **demonstração funcional local** e uma **estrutura de produção baseada no Supabase**. A versão de produção ainda precisará ser configurada, implantada, testada no ambiente real e passar por revisão de LGPD/contratos. A demonstração não é adequada para dados reais.
+**PWA:** layout responsivo com menu de navegação móvel, splash da Nexa Studio e instalação via Chrome no Android ou Safari no iPhone/iPad, após publicação em HTTPS. O cache serve apenas os arquivos públicos da interface; sem internet o servidor não aceita novas solicitações.
 
-## 2. Testar agora, sem instalar nada
+## Como testar a demonstração
 
-1. Descompacte o arquivo `.zip`.
-2. Abra `index.html` no Chrome, Edge ou Safari. Se o navegador bloquear recursos locais, publique os arquivos em um servidor estático (por exemplo, GitHub Pages) ou rode `python -m http.server 8000` nesta pasta.
-3. Na tela de login, toque em **Dona**, **Profissional** ou **Terminal** para visitar a demonstração.
-4. Entre como **Profissional** e clique em **Registrar ponto** no menu (ou no cartão da página inicial). Digite o PIN de demonstração `158236`, use a câmera ou a simulação de foto da demonstração e confirme a entrada ou saída. Os registros ficam visíveis no histórico e, após a saída, pendentes de conferência.
-5. Experimente cadastrar um profissional, alterar a tarifa e o dia de fechamento, usar o terminal e solicitar correção.
+1. Extraia o ZIP e abra o `index.html`. Se o navegador não abrir recursos em `file://`, use um servidor estático ou GitHub Pages.
+2. Clique em **Profissional**, depois **Novo pedido**. Informe as datas, horários e o motivo do serviço adicional. Envie.
+3. Saia e entre como **Dona** para verificar os pedidos; acesse **Solicitações**, abra um pedido e aprove ou recuse. O botão **Corrigir** permite corrigir datas e motivo **somente com justificativa obrigatória**.
+4. No painel da dona, abra **Profissionais** para cadastrar outra pessoa, ajustar valores e criar uma senha inicial; abra **Configurações** para definir o fechamento e criar o login do financeiro.
+5. Consulte **Financeiro** para apurar valores; um período só pode ser aprovado depois de fechado e sem pedidos pendentes. Abra **Relatórios** para exportar CSV.
 
-A demonstração utiliza dados **fictícios** e os mantém no `localStorage` do navegador. Se você limpar o armazenamento, a demonstração volta ao estado inicial. Não há sincronização entre aparelhos nessa modalidade.
-
-**Contas fictícias:**
+Credenciais fictícias, somente para demonstração:
 
 | Papel | E-mail | Senha |
 |---|---|---|
-| Proprietária | `dona@demo.nexa` | `Demo@1234` |
-| Administrativo | `financeiro@demo.nexa` | `Demo@1234` |
-| Profissional | `ana@demo.nexa` | `Demo@1234` |
-| Terminal | `terminal@demo.nexa` | `Demo@1234` |
+| Proprietária | dona@demo.nexa | Demo@1234 |
+| Financeiro | financeiro@demo.nexa | Demo@1234 |
+| Profissional | ana@demo.nexa | Demo@1234 |
 
-PIN fictício da Ana: `158236`. PIN fictício do Carlos: `729415`.
+A demonstração usa `localStorage` do navegador e **não compartilha dados entre dispositivos**. Os cadastros e senhas nela são apenas simulação. **Não use dados reais**.
 
-**Somente na demonstração:** se o navegador não fornecer câmera, existe um botão explícito para simular uma imagem. **No sistema real, o servidor exige JPEG válido e o botão de simulação não aparece.** A fotografia ajuda a conferir a identidade, mas não constitui prova infalível de quem estava presente; não há reconhecimento facial nem detecção automática de fraude.
+## Colocar em produção (Supabase)
 
-## 3. Preparar o Supabase para uso real
+A versão anterior (v1.x) tinha esquema de marcação de ponto incompatível. **A v2.0 deve começar em um projeto Supabase novo**, a menos que uma migração explícita seja desenvolvida e testada. Não rode o SQL da v2 sobre o banco da v1.
 
-### Etapa A — projeto e SQL
-
-1. Crie um **projeto Supabase exclusivo da clínica**. Recomenda-se que a **proprietária seja titular** do projeto e controle as permissões dos colaboradores técnicos.
-2. Entre em **Supabase > SQL Editor** e execute **todo o arquivo** `supabase/schema.sql` em um projeto novo.
-3. No **Authentication**, desabilite o autocadastro público e configure as regras de senha, recuperação e proteção de contas adequadas.
-4. No **Authentication > Users > Add user**, crie a **conta da proprietária** e confirme seu e-mail.
-5. Copie o UUID dela e, no SQL Editor, execute:
+1. A dona da clínica cria um novo projeto Supabase, de preferência sob a conta dela. Em **Authentication > Providers**, desative o autocadastro público. Configure recuperação de senha e políticas de autenticação adequadas.
+2. Execute o arquivo completo `supabase/schema.sql` no **SQL Editor** do projeto novo. As tabelas têm RLS ativo **sem políticas de acesso direto de usuário**: a Edge Function executa as operações autorizadas no servidor.
+3. Em **Authentication > Users**, crie a dona (e-mail real e senha forte), confirme o e-mail, copie o UUID do usuário e execute o SQL abaixo, adaptado:
 
 ```sql
-insert into public.profiles (id, full_name, email, role)
+insert into public.profiles (id, full_name, email, role, active, must_change_password)
 values (
-  'COLE-AQUI-O-UUID-DA-PROPRIETARIA',
+  'UUID_DA_USUARIA_DONA',
   'Nome da proprietária',
   'email.real@clinica.com.br',
-  'owner'
+  'owner', true, false
 );
 ```
 
-6. No **Storage**, confirme que o bucket `vet-clock-photos` existe e é **privado**. Não crie políticas de leitura pública.
+4. Instale a CLI do Supabase, rode `supabase login` e conecte o projeto com `supabase link --project-ref REF_DO_PROJETO`.
+5. Configure a origem do frontend publicado (HTTPS) para CORS: `supabase secrets set APP_ORIGIN="https://seu-dominio.com"` (sem barra final). As variáveis internas `SUPABASE_URL`, `SUPABASE_SERVICE_ROLE_KEY` e `SUPABASE_ANON_KEY` precisam existir no ambiente da função. **Jamais publique a service role no frontend.**
+6. Na pasta que contém `supabase/`, rode `supabase functions deploy nexa-api`. O arquivo `supabase/config.toml` mantém a verificação de JWT ativada.
+7. Configure `config.js` com a URL do projeto, sua chave **publishable/anon** e `functionName: 'nexa-api'`. A chave publishable pode ficar no cliente; a chave service role, **nunca**.
+8. Publique **somente a interface** (`index.html`, `styles.css`, `extra.css`, `app.js`, `demo.js`, `config.js`, `sw.js`, `manifest.webmanifest` e `assets/`) em hospedagem HTTPS. Depois entre como dona e cadastre o financeiro e os profissionais.
 
-### Etapa B — implantar função do servidor
+### Permissões e confidencialidade dos valores
 
-Instale a CLI do Supabase, autentique e conecte o projeto (a documentação oficial cobre os diferentes sistemas operacionais). Na raiz desta pasta, execute:
+O **backend** devolve os valores individuais por hora e totais financeiros somente para proprietária e financeiro. O profissional só recebe suas próprias solicitações, sem tarifas e sem acesso às informações dos colegas. Não basta ocultar a informação com CSS: o bloqueio está na Edge Function e nas tabelas protegidas.
 
-```bash
-supabase login
-supabase link --project-ref SEU_PROJECT_REF
-supabase secrets set NEXA_PIN_PEPPER="COLOQUE-AQUI-UM-SEGREDO-ALEATORIO-FORTE-COM-32-OU-MAIS-CARACTERES"
-supabase functions deploy nexa-api
-```
+**Privacidade da proprietária:** se você, desenvolvedor, tiver acesso ao banco como dono ou possuir a service role, ainda poderá consultar valores. Para que os valores sejam realmente privados perante o desenvolvedor, a proprietária deve administrar seu próprio projeto Supabase e restringir seu acesso ao banco/segredos depois da implantação. Contas administrativas do próprio aplicativo podem visualizar os valores.
 
-O **NEXA_PIN_PEPPER** é necessário para calcular os HMACs dos PINs no servidor. Guarde-o de maneira segura; **não o coloque em `config.js` ou no GitHub**. Nunca exponha a chave `service_role`, `sb_secret_*` ou qualquer segredo de administrador no navegador.
+### Regras de negócio da versão 2.0
 
-A função lê automaticamente `SUPABASE_URL`, `SUPABASE_ANON_KEY` e `SUPABASE_SERVICE_ROLE_KEY` do ambiente Supabase. Confira essas variáveis na instalação. Se não estiverem disponíveis, providencie-as como segredos do ambiente.
+- Cada solicitação contém início, fim, duração calculada e **motivo obrigatório**. Não existe marcação de presença diária.
+- Limite por solicitação: 16 horas; não aceita pedido futuro, sobreposição com pedido existente que não foi recusado, nem pedido com mais de 365 dias.
+- Depois de enviado, o profissional não altera o pedido. Administração pode corrigir um pedido pendente com justificativa obrigatória, com auditoria da alteração.
+- Pedidos ficam `pending`, `approved` ou `rejected`. Recusa exige justificativa. Apenas `approved` entra no valor a apurar.
+- Valores por hora podem ser alterados pela administração; cada solicitação conserva o valor/hora que existia ao ser enviada.
+- Um fechamento mensal só pode ser aprovado quando o período encerrou e não há pedidos pendentes para aquele profissional. Apurações aprovadas são bloqueadas contra alteração posterior via API.
+- O registro da apuração **não transfere dinheiro** nem emite nota fiscal; a clínica executa as etapas contábeis e financeiras separadamente.
 
-### Etapa C — configurar o frontend
+### Considerações de implantação e segurança
 
-Edite `config.js` com a URL do projeto e sua chave **pública/publishable**:
+Esta entrega inclui um **protótipo funcional demonstrável e código-base para backend de produção**. É necessário implantar em Supabase real, executar testes de integração, autenticação, permissões, concorrência, backup e recuperação de conta, e revisar juridicamente os contratos antes de operar. Evite usar dados reais na demonstração. O esquema não migra registros históricos da v1.
 
-```js
-window.NEXA_CONFIG = {
-  supabaseUrl: 'https://SEU-PROJETO.supabase.co',
-  supabaseAnonKey: 'SUA_CHAVE_PUBLICA',
-  functionName: 'nexa-api',
-};
-```
+Como os profissionais são **PJs**, o projeto usa “horas adicionais de serviço” para descrever o que foi prestado, e **não** presume aplicação automática de adicional trabalhista. O uso prático, a contratação, a subordinação e as obrigações trabalhistas/fiscais exigem avaliação jurídica e contábil. A mudança do nome não descaracteriza, por si só, eventual vínculo trabalhista.
 
-**Só coloque a chave pública no JavaScript.** A permissão real de leitura e alteração de dados é definida pela Edge Function e pelas tabelas protegidas, não pela interface.
-
-### Etapa D — publicar em HTTPS
-
-Pode hospedar `index.html`, `styles.css`, `app.js`, `demo.js`, `config.js`, `manifest.webmanifest` e a pasta `assets/` em **GitHub Pages** ou outro servidor estático com HTTPS. O diretório `supabase/` é material de implantação do backend e não precisa ser servido no site.
-
-Use uma URL HTTPS para o celular da recepção permitir a câmera. Entre com a proprietária; no painel **Configurações**, cadastre o administrativo e o terminal; em **Profissionais**, cadastre cada prestador com e-mail, senha inicial, PIN e tarifa.
-
-**Recomendação:** bloqueie o celular no app/site com um modo quiosque apropriado, controle quem pode acessar fisicamente o aparelho e use internet estável. Um PIN + selfie não impede, por si só, fraude ou falsificação da imagem.
-
-## 4. Fluxo real sugerido
-
-1. Dona/financeiro entra com seu e-mail e senha próprios.
-2. A proprietária configura o nome da clínica e o dia de fechamento.
-3. Dona/financeiro cadastra cada PJ, tarifa horária, PIN e senha inicial.
-4. O PJ troca a senha no primeiro login. No celular da recepção, usa o PIN + fotografia para entrada e saída.
-5. Se esquecer alguma marcação, o PJ informa a divergência, mas **não edita horas**. O administrativo registra a correção manual com justificativa e atesta a conferência pelas câmeras.
-6. Após o dia de fechamento, o financeiro revisa o período e aprova a apuração individual. O valor aprovado não muda com edições posteriores daquele período.
-7. A clínica emite os documentos fiscais e efetua pagamentos conforme os contratos, fora da plataforma (não há integração bancária/nota fiscal nesta versão).
-
-## 5. Estrutura do projeto
+## Estrutura resumida
 
 ```text
 nexa-vet-control/
-├── index.html                     # abertura, login e estrutura
-├── styles.css                     # identidade visual Nexa
-├── app.js                         # telas e regras de interação
-├── demo.js                        # demonstração local fictícia
-├── config.js                      # URL e chave PÚBLICA Supabase
-├── manifest.webmanifest           # atalho para tela inicial do celular
-├── assets/favicon.svg
-└── supabase/
-    ├── schema.sql                 # banco, restrições e storage
-    └── functions/nexa-api/index.ts # operações seguras no servidor
+├── index.html, styles.css, extra.css
+├── app.js                 # interface, validações e fluxos
+├── demo.js                # demonstração fictícia local
+├── config.js              # URL e chave pública
+├── sw.js, manifest.webmanifest, assets/
+├── supabase/schema.sql    # banco NOVO (sem dados de ponto)
+├── supabase/config.toml
+└── supabase/functions/nexa-api/index.ts
 ```
 
-## 6. Privacidade e aspectos jurídicos (antes de usar)
-
-- A fotografia da pessoa é **dado pessoal** e exige informação transparente sobre finalidade, acesso, base legal, retenção e segurança. Defina com a clínica e o responsável jurídico a **política de privacidade**, prazo de retenção e procedimento de descarte; o pacote ainda **não automatiza o descarte das imagens**.
-- O app não implementa reconhecimento facial e não possui detecção biométrica de identidade. O nome e foto do registro não são comprovação automática infalível; mantenha a conferência com câmeras e outras evidências quando houver dúvidas.
-- Medir horas de prestadores **PJ** pode elevar o risco de caracterização de vínculo de emprego dependendo da prática de trabalho, subordinação e contrato. A clínica deve consultar seu jurídico/contabilidade e tratar os registros como controle de serviços contratados, não presumir que trocar o nome "ponto" resolve essa questão.
-- Para evitar que o desenvolvedor tenha acesso aos **valores individuais**, a clínica deve controlar seu próprio Supabase e não fornecer ao desenvolvedor a chave de serviço ou permissões de banco de dados após a configuração. Ocultar valores na interface NÃO é suficiente se alguém mantém acesso ao backend.
-- Antes de pôr em uso: realizar testes com usuários reais autorizados (mas dados de teste), revisar permissões, definir backup, contingência de internet/câmera, recuperação de senha, retenção das fotos e rotina de monitoramento.
-
----
-
-**Nexa Studio & Publicidade** · Projeto NEXA VET CONTROL · Primeira versão para apresentação e implantação orientada.
-
-## Atualização 1.1 — Marcação no login pessoal
-
-- O profissional agora tem o menu **Registrar ponto**, além de **Meus registros**, **Minhas solicitações** e **Minha conta**.
-- A função de produção `worker_clock` recebe apenas registros da própria conta autenticada, valida o PIN no servidor, exige imagem JPEG e guarda fotografias no bucket privado. O servidor atribui a hora.
-- Registros via conta pessoal, após a saída, são marcados `pending_review` e exigem aprovação com conferência das câmeras antes de entrar no pagamento.
-- **Limite importante:** PIN e selfie não garantem que o profissional esteja dentro da clínica. Se o registro tiver de ocorrer *exclusivamente* na recepção, use o terminal fixo como único canal ou implante, antes do uso real, um controle adicional de aparelho autorizado com validação no servidor.
-- Depois de substituir os arquivos no site, também é necessário **implantar a Edge Function atualizada** (`supabase functions deploy nexa-api`). Apenas publicar `app.js` não ativa o novo registro no Supabase.
-
-
-## Atualização 1.2 — Aplicativo instalável (PWA)
-
-O sistema foi adaptado para **celulares Android, iPhone/iPad e tablets**: menu fixo inferior em telas de até 900 px, área de toque ampliada, formulários e modais adequados à tela pequena, ícones PNG, layout de tela cheia e suporte ao comando "Instalar aplicativo".
-
-### Instalar após publicar em HTTPS
-
-- **Android (Chrome/Edge):** abra a URL publicada, toque em **Instalar no celular ou tablet** ou no menu do navegador **Instalar aplicativo / Adicionar à tela inicial**. Confirme e abra pelo ícone **Nexa Vet**.
-- **iPhone / iPad (Safari):** abra a URL publicada, toque em **Compartilhar** → **Adicionar à Tela de Início**. Abra pelo novo ícone na tela inicial. O instalador de iOS não usa o mesmo prompt do Chrome.
-- **Computador (Chrome/Edge):** pode instalar pelo botão de instalação do navegador quando oferecido.
-- **Teste local:** `file://` não habilita Service Worker e nem instalação de PWA. Para testar em um computador, use `python -m http.server 8000` na pasta e abra `http://localhost:8000`. Em celulares, use uma hospedagem HTTPS real.
-
-**Atenção:** `sw.js` armazena apenas os arquivos estáticos da interface. **Não armazena fotos, sessões de login nem respostas do Supabase para uso offline.** Na ausência de internet, o aplicativo pode abrir sua interface anteriormente carregada, mas NÃO registra ponto, NÃO autentica e NÃO sincroniza dados reais; nenhuma marcação fica em fila escondida. O servidor continua sendo responsável por atribuir o horário de registro e guardar as evidências. O modo demonstração permanece local e fictício.
-
-### Publicação da versão 1.2
-
-1. Atualize **todos** os arquivos da raiz, especialmente `index.html`, `app.js`, `styles.css`, `manifest.webmanifest`, `sw.js` e `assets/icon-*.png`.
-2. Publique em HTTPS com `manifest.webmanifest` servido como tipo apropriado. Se o domínio já tinha a versão antiga instalada, feche e reabra o app para receber a atualização; em alguns casos, será necessário atualizar a página ou reinstalar.
-3. Configure `config.js` e publique o backend Supabase seguindo a seção 3 do manual. Os recursos administrativos e registros reais só funcionarão quando implantados.
-4. No celular da recepção, instale o app e entre com a conta **Terminal** (o sistema não bloqueia automaticamente outros navegadores nem certifica o aparelho; recomenda-se modo quiosque/gerenciamento do dispositivo).
-
-**Escopo:** PWA instalável, não um APK/IPA nativo. A capacidade de instalar depende do navegador, HTTPS e permissões do sistema operacional. Sem conexão o fluxo real de marcação não pode ser concluído.
+**Nexa Studio — 2026. Versão 2.0 — Solicitações de horas adicionais.**

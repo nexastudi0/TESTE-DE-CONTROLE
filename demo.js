@@ -1,118 +1,98 @@
-/* DEMONSTRAÇÃO LOCAL — dados ilustrativos, sem autenticação/armazenamento seguro.
-   Nunca utilizar esta modalidade com dados reais de pacientes ou profissionais. */
+/* MODO DEMONSTRAÇÃO: dados e senhas fictícios ficam no navegador. NUNCA utilizar para operação real. */
 (() => {
-  const KEY='nexa_vet_control_demo_v1';
-  const uid=()=>crypto.randomUUID?crypto.randomUUID():`${Date.now()}-${Math.random()}`;
-  const dateAt=(day,hour,minute=0,monthOffset=0)=>{const t=new Intl.DateTimeFormat('en-US',{timeZone:'America/Sao_Paulo',year:'numeric',month:'2-digit'}).formatToParts(new Date());const x=Object.fromEntries(t.map(v=>[v.type,v.value]));const d=new Date(Date.UTC(Number(x.year),Number(x.month)-1+monthOffset,day,15));const iso=`${d.getUTCFullYear()}-${String(d.getUTCMonth()+1).padStart(2,'0')}-${String(d.getUTCDate()).padStart(2,'0')}T${String(hour).padStart(2,'0')}:${String(minute).padStart(2,'0')}:00-03:00`;return new Date(iso).toISOString()};
+  const KEY='nexa_vet_additional_hours_demo_v2';
+  const uid=()=>globalThis.crypto?.randomUUID?.() || `d${Date.now()}${Math.random().toString(36).slice(2)}`;
+  const admin=u=>['owner','finance'].includes(u.role);
+  const day=(offset,hr=18,min=0)=>{const d=new Date();d.setDate(d.getDate()+offset);d.setHours(hr,min,0,0);return d.toISOString()};
+  const pub=u=>{const {password,rate,...p}=u;return p};
+  function periodFor(iso,closing){const date=new Date(iso);let y=+new Intl.DateTimeFormat('en-US',{timeZone:'America/Sao_Paulo',year:'numeric'}).format(date);let m=+new Intl.DateTimeFormat('en-US',{timeZone:'America/Sao_Paulo',month:'numeric'}).format(date);const d=+new Intl.DateTimeFormat('en-US',{timeZone:'America/Sao_Paulo',day:'numeric'}).format(date);if(d>Math.min(closing,new Date(y,m,0).getDate())){m++;if(m===13){m=1;y++}}return `${y}-${String(m).padStart(2,'0')}`}
+  function closed(key,closing){return key<periodFor(new Date().toISOString(),closing)}
   function seed(){
     const users=[
       {id:'owner',role:'owner',name:'Mariana Oliveira',email:'dona@demo.nexa',password:'Demo@1234',active:true,must_change_password:false},
       {id:'finance',role:'finance',name:'Camila Santos',email:'financeiro@demo.nexa',password:'Demo@1234',active:true,must_change_password:false},
-      {id:'kiosk',role:'kiosk',name:'Recepção principal',email:'terminal@demo.nexa',password:'Demo@1234',active:true,must_change_password:false},
-      {id:'p1',role:'worker',name:'Ana Martins',email:'ana@demo.nexa',password:'Demo@1234',pin:'158236',rate:48,active:true,must_change_password:false},
-      {id:'p2',role:'worker',name:'Carlos Ribeiro',email:'carlos@demo.nexa',password:'Demo@1234',pin:'729415',rate:55,active:true,must_change_password:false},
-      {id:'p3',role:'worker',name:'Júlia Ferreira',email:'julia@demo.nexa',password:'Demo@1234',pin:'436189',rate:42,active:true,must_change_password:false},
-      {id:'p4',role:'worker',name:'Lucas Costa',email:'lucas@demo.nexa',password:'Demo@1234',pin:'804627',rate:60,active:true,must_change_password:false},
+      {id:'w1',role:'worker',name:'Ana Martins',email:'ana@demo.nexa',password:'Demo@1234',rate:48,active:true,must_change_password:false,pj_cnpj:''},
+      {id:'w2',role:'worker',name:'Carlos Ribeiro',email:'carlos@demo.nexa',password:'Demo@1234',rate:55,active:true,must_change_password:false,pj_cnpj:''},
+      {id:'w3',role:'worker',name:'Júlia Ferreira',email:'julia@demo.nexa',password:'Demo@1234',rate:42,active:true,must_change_password:false,pj_cnpj:''},
     ];
-    const sessions=[];const dayCount=new Date().getDate();let i=0;
-    for(let j=1;j<=Math.min(24,dayCount);j++){
-      for(const w of users.filter(u=>u.role==='worker')){
-        if((j+w.name.length)%5===0)continue;
-        const start=dateAt(j,8+(w.name.length%2),0);const end=dateAt(j,14+(w.name.length%3),30);
-        sessions.push({id:'s'+ ++i,worker_id:w.id,started_at:start,ended_at:end,status:'automatic',rate_snapshot:w.rate,started_photo_path:null,ended_photo_path:null,reason:null,reviewed_by:null,reviewed_at:null,created_at:end});
-      }
-    }
-    if(sessions.length){const s=sessions[sessions.length-3];s.status='pending_review';s.reason='Exemplo: horário informado após esquecimento';}
-    const audit=[{id:uid(),action:'system_setup',actor_name:'Nexa Studio',description:'Ambiente de demonstração preparado',created_at:new Date().toISOString()}];
-    return {users,settings:{company_name:'Clínica Veterinária Exemplo',closing_day:25},sessions,approvals:[],audit,requests:[]};
+    const extras=[
+      {id:'x1',worker_id:'w1',started_at:day(-2,18),ended_at:day(-2,20,30),reason:'Atendimento de emergência de um paciente após o horário programado.',status:'pending',rate_snapshot:48,admin_note:null,reviewed_by:null,reviewed_at:null,created_at:day(-1)},
+      {id:'x2',worker_id:'w2',started_at:day(-4,17,30),ended_at:day(-4,19),reason:'Auxílio no procedimento cirúrgico que precisou ser concluído.',status:'approved',rate_snapshot:55,admin_note:'Serviço confirmado pela gestão.',reviewed_by:'owner',reviewed_at:day(-3),created_at:day(-3)},
+      {id:'x3',worker_id:'w1',started_at:day(-7,18),ended_at:day(-7,19,30),reason:'Acompanhamento de animal internado e entrega de informações ao tutor.',status:'approved',rate_snapshot:48,admin_note:'Conferido.',reviewed_by:'finance',reviewed_at:day(-6),created_at:day(-6)},
+      {id:'x4',worker_id:'w3',started_at:day(-9,18),ended_at:day(-9,19),reason:'Permanência adicional para organizar os materiais da sala cirúrgica.',status:'rejected',rate_snapshot:42,admin_note:'Solicitação duplicada; serviço contabilizado em outro lançamento.',reviewed_by:'owner',reviewed_at:day(-8),created_at:day(-8)},
+    ];
+    return {users,settings:{company_name:'Clínica Veterinária Exemplo',closing_day:25},extras,payouts:[],audit:[],created_at:new Date().toISOString()};
   }
-  let db;
-  function load(){if(!db){try{db=JSON.parse(localStorage.getItem(KEY))}catch(_){} if(!db)db=seed()}return db}
-  function save(){try{localStorage.setItem(KEY,JSON.stringify(db))}catch(_){/* navegação privada / origem restrita: demonstração em memória */}}
-  function log(actor,action,description){load().audit.unshift({id:uid(),actor_name:actor.name,action,description,created_at:new Date().toISOString()})}
-  function snapshot(user){const d=load();if(user.role==='kiosk')return {user:publicUser(user),settings:d.settings,workers:[],sessions:[],approvals:[],audit:[],requests:[],admins:[]};if(user.role==='worker')return {user:publicUser(user),settings:d.settings,workers:[],sessions:d.sessions.filter(s=>s.worker_id===user.id),approvals:[],audit:[],requests:d.requests.filter(r=>r.worker_id===user.id),admins:[]};return {user:publicUser(user),settings:d.settings,workers:d.users.filter(u=>u.role==='worker').map(publicUser),sessions:d.sessions,approvals:d.approvals,audit:d.audit,requests:d.requests,admins:d.users.filter(u=>u.role==='owner'||u.role==='finance').map(publicUser)};}
-  const publicUser=u=>{const {password,pin,...clean}=u;return clean};
-  const admin=u=>['owner','finance'].includes(u.role);
-  function can(u,condition){if(!condition)throw Error('Você não tem permissão para executar esta ação.')}
-  const between=(x,min,max)=>Number.isFinite(x)&&x>=min&&x<=max;
-  const periodEnd=(key,day)=>{const [y,m]=key.split('-').map(Number);const last=new Date(y,m,0).getDate();return new Date(y,m-1,Math.min(day,last),23,59,59,999)};
-  const periodFor=(iso,day)=>{let d=new Date(iso);let y=d.getFullYear(),m=d.getMonth()+1;const key=`${y}-${String(m).padStart(2,'0')}`;if(d>periodEnd(key,day)){m++;if(m===13){m=1;y++}}return `${y}-${String(m).padStart(2,'0')}`};
+  let data;
+  function load(){if(!data){try{data=JSON.parse(localStorage.getItem(KEY))}catch(_){}if(!data)data=seed()}return data}
+  function save(){try{localStorage.setItem(KEY,JSON.stringify(data))}catch(_){}}
+  function errorIf(cond,msg){if(cond)throw Error(msg)}
+  function getUser(id){const u=load().users.find(x=>x.id===id&&x.active);errorIf(!u,'Acesso não autorizado.');return u}
+  function audit(u,action,details){load().audit.unshift({id:uid(),actor_name:u.name,actor_id:u.id,action,details,created_at:new Date().toISOString()})}
+  function hours(x){return (new Date(x.ended_at)-new Date(x.started_at))/36e5}
+  function checkInterval(start,end,skip=null,worker_id){const a=new Date(start),b=new Date(end);const h=(b-a)/36e5;errorIf(!Number.isFinite(h)||h<=0||h>16,'Informe um intervalo de 1 minuto até 16 horas.');errorIf(b>new Date(Date.now()+300000),'O término não pode estar no futuro.');errorIf(a<new Date(Date.now()-365*86400000),'O pedido deve ter ocorrido nos últimos 365 dias.');errorIf(load().extras.some(x=>x.id!==skip&&x.worker_id===worker_id&&x.status!=='rejected'&&new Date(x.started_at)<b&&a<new Date(x.ended_at)),'Já existe uma solicitação para parte desse horário.');return h}
+  function snapshot(u){const db=load(),base={user:pub(u),settings:{...db.settings},extras:[],workers:[],payouts:[],admins:[],audit:[]};if(admin(u)){base.extras=db.extras.map(x=>({...x}));base.workers=db.users.filter(x=>x.role==='worker').map(x=>({...pub(x),rate:x.rate}));base.payouts=db.payouts.map(x=>({...x}));base.admins=db.users.filter(admin).map(pub);base.audit=db.audit.slice(0,160).map(x=>({...x}))}else{base.extras=db.extras.filter(x=>x.worker_id===u.id).map(({rate_snapshot,...x})=>({...x}))}return base}
+  function covered(wid,key){return load().payouts.some(p=>p.worker_id===wid&&p.period_key===key)}
+  function checkNotPaid(wid,end){errorIf(covered(wid,periodFor(end,load().settings.closing_day)),'Esse período já foi fechado e aprovado. Procure a administração.')}
   window.NexaDemo={
-    credentials:{owner:['dona@demo.nexa','Demo@1234'],finance:['financeiro@demo.nexa','Demo@1234'],worker:['ana@demo.nexa','Demo@1234'],kiosk:['terminal@demo.nexa','Demo@1234']},
-    async login(email,password){const user=load().users.find(u=>u.email.toLowerCase()===email.trim().toLowerCase()&&u.password===password&&u.active);if(!user)throw Error('E-mail ou senha inválidos.');return publicUser(user)},
-    async get(userId){let u=load().users.find(x=>x.id===userId&&x.active);if(!u)throw Error('Conta não disponível');return snapshot(u)},
-    async run(userId,action,payload={}){const d=load();const user=d.users.find(u=>u.id===userId&&u.active);if(!user)throw Error('Sessão inválida.');let w,s;
+    credentials:{owner:['dona@demo.nexa','Demo@1234'],finance:['financeiro@demo.nexa','Demo@1234'],worker:['ana@demo.nexa','Demo@1234']},
+    async login(email,password){const u=load().users.find(x=>x.email.toLowerCase()===String(email).trim().toLowerCase()&&x.password===password&&x.active);errorIf(!u,'E-mail ou senha inválidos.');return pub(u)},
+    async run(id,action,p={}){
+      const db=load(),u=getUser(id),adm=admin(u);let w,x;const requireAdmin=()=>errorIf(!adm,'Acesso restrito à administração.');
       switch(action){
-        case 'bootstrap':return snapshot(user);
-        case 'create_employee':
-          can(user,admin(user));
-          if(!payload.name?.trim()||!payload.email?.includes('@')||!/^\d{6}$/.test(payload.pin)||!between(Number(payload.rate),0.01,100000)||payload.password?.length<8)throw Error('Preencha os dados corretamente.');
-          if(d.users.some(u=>u.email.toLowerCase()===payload.email.toLowerCase()))throw Error('E-mail já cadastrado.');
-          if(d.users.some(u=>u.pin===payload.pin))throw Error('Este PIN já está em uso.');
-          d.users.push({id:uid(),role:'worker',name:payload.name.trim(),email:payload.email.trim().toLowerCase(),password:payload.password,pin:payload.pin,rate:Number(payload.rate),pj_cnpj:payload.pj_cnpj||null,pj_legal_name:payload.pj_legal_name||null,active:true,must_change_password:true});log(user,'create_employee',`Profissional ${payload.name} cadastrado`);break;
-        case 'update_employee':
-          can(user,admin(user));w=d.users.find(x=>x.id===payload.id&&x.role==='worker');if(!w)throw Error('Profissional não encontrado.');
-          if(payload.name!==undefined){if(!payload.name.trim())throw Error('Nome obrigatório.');w.name=payload.name.trim()}
-          if(payload.rate!==undefined){if(!between(Number(payload.rate),.01,100000))throw Error('Valor inválido.');w.rate=Number(payload.rate)}
-          if(payload.active!==undefined)w.active=Boolean(payload.active);if(payload.pj_cnpj!==undefined)w.pj_cnpj=payload.pj_cnpj||null;if(payload.pj_legal_name!==undefined)w.pj_legal_name=payload.pj_legal_name||null;
-          if(payload.pin){if(!/^\d{6}$/.test(payload.pin))throw Error('PIN deve ter 6 dígitos.');if(d.users.some(x=>x.id!==w.id&&x.pin===payload.pin))throw Error('PIN já utilizado.');w.pin=payload.pin}
-          log(user,'update_employee',`Cadastro de ${w.name} atualizado`);break;
-        case 'reset_password':
-          can(user,admin(user));w=d.users.find(x=>x.id===payload.id&&x.role==='worker');if(!w||payload.password?.length<8)throw Error('Profissional ou senha inválidos.');w.password=payload.password;w.must_change_password=true;log(user,'reset_password',`Senha provisória emitida para ${w.name}`);break;
-        case 'create_admin':
-          can(user,user.role==='owner');if(!payload.name?.trim()||!payload.email?.includes('@')||payload.password?.length<8||!['owner','finance'].includes(payload.role))throw Error('Dados inválidos.');
-          if(d.users.some(x=>x.email.toLowerCase()===payload.email.toLowerCase()))throw Error('E-mail já cadastrado.');
-          d.users.push({id:uid(),name:payload.name.trim(),email:payload.email.trim(),password:payload.password,role:payload.role,active:true,must_change_password:true});log(user,'create_admin','Novo acesso administrativo cadastrado');break;
-        case 'create_kiosk':
-          can(user,admin(user));if(!payload.email?.includes('@')||payload.password?.length<8||!payload.name?.trim())throw Error('Dados inválidos.');
-          if(d.users.some(x=>x.email.toLowerCase()===payload.email.toLowerCase()))throw Error('E-mail já cadastrado.');
-          d.users.push({id:uid(),name:payload.name.trim(),email:payload.email.trim(),password:payload.password,role:'kiosk',active:true,must_change_password:false});log(user,'create_kiosk','Terminal de recepção cadastrado');break;
-        case 'save_settings':
-          can(user,admin(user));if(!between(Number(payload.closing_day),1,31)||!payload.company_name?.trim())throw Error('Informe uma clínica e um dia de fechamento válidos.');
-          d.settings={company_name:payload.company_name.trim(),closing_day:Number(payload.closing_day)};log(user,'save_settings','Configuração de fechamento atualizada');break;
-        case 'clock':
-          can(user,user.role==='kiosk');if(!/^\d{6}$/.test(payload.pin))throw Error('O PIN precisa de seis dígitos.');
-          if(!payload.photo_base64?.startsWith('data:image/jpeg;base64,'))throw Error('Capture a foto para registrar.');
-          w=d.users.find(x=>x.pin===payload.pin&&x.role==='worker'&&x.active);if(!w)throw Error('PIN inválido ou profissional inativo.');
-          s=d.sessions.find(x=>x.worker_id===w.id&&!x.ended_at);
-          if(s){s.ended_at=new Date().toISOString();s.ended_photo_path='demo-photo';s.status=s.status==='pending_review'||s.reason?.startsWith('Registro via login pessoal')?'pending_review':'automatic';log(user,'clock_out',`Saída registrada para ${w.name}`);save();return {kind:'out',name:w.name,time:s.ended_at}}
-          s={id:uid(),worker_id:w.id,started_at:new Date().toISOString(),ended_at:null,status:'open',rate_snapshot:w.rate,started_photo_path:'demo-photo',ended_photo_path:null,reason:null,reviewed_by:null,reviewed_at:null,created_at:new Date().toISOString()};d.sessions.unshift(s);log(user,'clock_in',`Entrada registrada para ${w.name}`);save();return {kind:'in',name:w.name,time:s.started_at};
-        case 'worker_clock':
-          can(user,user.role==='worker');if(!/^\d{6}$/.test(payload.pin))throw Error('O PIN precisa de seis dígitos.');
-          if(!payload.photo_base64?.startsWith('data:image/jpeg;base64,'))throw Error('É obrigatório tirar uma foto ao vivo.');
-          if(user.pin!==payload.pin)throw Error('PIN não corresponde ao seu cadastro.');
-          s=d.sessions.find(x=>x.worker_id===user.id&&!x.ended_at);
-          if(s&&Date.now()-new Date(s.started_at).valueOf()>36*3600*1000)throw Error('Registro anterior muito antigo. Solicite correção administrativa.');
-          if(s){s.ended_at=new Date().toISOString();s.ended_photo_path='demo-photo';s.status='pending_review';log(user,'worker_clock_out','Saída registrada no acesso pessoal (aguarda conferência)');save();return {kind:'out',name:user.name,time:s.ended_at,requires_review:true}}
-          s={id:uid(),worker_id:user.id,started_at:new Date().toISOString(),ended_at:null,status:'open',rate_snapshot:user.rate,started_photo_path:'demo-photo',ended_photo_path:null,reason:'Registro via login pessoal; necessita conferência das câmeras.',reviewed_by:null,reviewed_at:null,created_at:new Date().toISOString()};d.sessions.unshift(s);log(user,'worker_clock_in','Entrada registrada no acesso pessoal (aguarda conferência após saída)');save();return {kind:'in',name:user.name,time:s.started_at,requires_review:true};
-        case 'manual_session':
-          can(user,admin(user));w=d.users.find(x=>x.id===payload.worker_id&&x.role==='worker');if(!w)throw Error('Profissional não encontrado.');if(!payload.reason?.trim()||!payload.started_at)throw Error('Informe o motivo e o horário.');
-          if(payload.ended_at&&new Date(payload.started_at)>=new Date(payload.ended_at))throw Error('A saída precisa ser posterior à entrada.');
-          if(payload.id){s=d.sessions.find(x=>x.id===payload.id);if(!s||d.approvals.some(a=>a.worker_id===s.worker_id&&a.period_key===periodFor(s.started_at,d.settings.closing_day)))throw Error('Registro não editável.');s.started_at=new Date(payload.started_at).toISOString();s.ended_at=payload.ended_at?new Date(payload.ended_at).toISOString():null;s.reason=payload.reason.trim();s.status='pending_review'}
-          else d.sessions.unshift({id:uid(),worker_id:w.id,started_at:new Date(payload.started_at).toISOString(),ended_at:payload.ended_at?new Date(payload.ended_at).toISOString():null,status:'pending_review',rate_snapshot:w.rate,reason:payload.reason.trim(),reviewed_by:null,reviewed_at:null,started_photo_path:null,ended_photo_path:null,created_at:new Date().toISOString()});
-          log(user,'manual_session',`Registro de ${w.name} aguardando conferência`);break;
-        case 'review_session':
-          can(user,admin(user));s=d.sessions.find(x=>x.id===payload.id);if(!s)throw Error('Registro não encontrado.');if(s.status!=='pending_review'||!s.ended_at)throw Error('Ajuste não está pronto para conferência.');if(!payload.confirmed)throw Error('Confirme que as câmeras foram conferidas.');
-          s.status='reviewed';s.reviewed_by=user.id;s.reviewed_at=new Date().toISOString();log(user,'review_session','Correção conferida com câmeras');break;
-        case 'request_correction':
-          can(user,user.role==='worker');if(!payload.note?.trim())throw Error('Explique o que precisa ser conferido.');d.requests.unshift({id:uid(),worker_id:user.id,note:payload.note.trim(),created_at:new Date().toISOString(),status:'open'});log(user,'request_correction','Profissional comunicou divergência');break;
-        case 'resolve_request':
-          can(user,admin(user));s=d.requests.find(r=>r.id===payload.id);if(!s)throw Error('Solicitação não encontrada.');s.status='resolved';log(user,'resolve_request','Solicitação analisada');break;
-        case 'approve_payment':
-          can(user,admin(user));w=d.users.find(x=>x.id===payload.worker_id&&x.role==='worker');if(!w)throw Error('Profissional não encontrado.');
-          if(d.approvals.some(a=>a.worker_id===w.id&&a.period_key===payload.period_key))throw Error('Pagamento já aprovado.');
-          const relevant=d.sessions.filter(s=>s.worker_id===w.id&&periodFor(s.started_at,d.settings.closing_day)===payload.period_key);
-          if(!relevant.length||relevant.some(s=>!s.ended_at||s.status==='pending_review'))throw Error('Existem registros pendentes ou nenhum serviço neste período.');
-          const hours=relevant.reduce((a,s)=>a+(new Date(s.ended_at)-new Date(s.started_at))/3600000,0);
-          const amount=relevant.reduce((a,s)=>a+((new Date(s.ended_at)-new Date(s.started_at))/3600000)*s.rate_snapshot,0);
-          d.approvals.push({id:uid(),worker_id:w.id,period_key:payload.period_key,hours,amount:Math.round(amount*100)/100,approved_at:new Date().toISOString(),approved_by:user.id});log(user,'approve_payment',`Pagamento de ${w.name} aprovado`);break;
-        case 'change_password':
-          if(payload.current_password!==user.password)throw Error('Senha atual incorreta.');if(!payload.new_password||payload.new_password.length<8)throw Error('A nova senha precisa ter pelo menos 8 caracteres.');if(payload.new_password===user.password)throw Error('A nova senha precisa ser diferente da atual.');user.password=payload.new_password;user.must_change_password=false;log(user,'change_password','Senha pessoal alterada');break;
-        case 'photo_url':return {url:null};
-        default:throw Error('Ação não implementada.');
+        case 'bootstrap':return snapshot(u);
+        case 'submit_extra':{
+          errorIf(u.role!=='worker','Apenas profissionais podem enviar solicitações.');
+          const reason=String(p.reason||'').trim();errorIf(reason.length<15||reason.length>1000,'Explique o motivo com pelo menos 15 caracteres (até 1.000).');
+          checkInterval(p.started_at,p.ended_at,null,u.id);checkNotPaid(u.id,p.ended_at);
+          db.extras.unshift({id:uid(),worker_id:u.id,started_at:new Date(p.started_at).toISOString(),ended_at:new Date(p.ended_at).toISOString(),reason,status:'pending',rate_snapshot:u.rate,admin_note:null,reviewed_by:null,reviewed_at:null,created_at:new Date().toISOString()});audit(u,'submit_extra','Solicitação de horas adicionais enviada.');break;
+        }
+        case 'approve_extra':case 'reject_extra':{
+          requireAdmin();x=db.extras.find(e=>e.id===p.id);errorIf(!x||x.status!=='pending','Solicitação não encontrada ou já analisada.');checkNotPaid(x.worker_id,x.ended_at);
+          const note=String(p.note||'').trim();errorIf(action==='reject_extra'&&note.length<8,'Informe o motivo da recusa (mínimo 8 caracteres).');
+          x.status=action==='approve_extra'?'approved':'rejected';x.admin_note=note||null;x.reviewed_by=u.id;x.reviewed_at=new Date().toISOString();audit(u,action,`Solicitação ${x.id}: ${x.status}. ${note}`);break;
+        }
+        case 'edit_extra':{
+          requireAdmin();x=db.extras.find(e=>e.id===p.id);errorIf(!x||x.status!=='pending','Somente pedidos pendentes podem ser corrigidos.');checkNotPaid(x.worker_id,x.ended_at);checkInterval(p.started_at,p.ended_at,x.id,x.worker_id);checkNotPaid(x.worker_id,p.ended_at);
+          const reason=String(p.reason||'').trim(),justification=String(p.justification||'').trim();errorIf(reason.length<15||justification.length<12,'Preencha motivo do serviço e justificativa da correção.');
+          audit(u,'edit_extra',`Correção de ${x.id}; antes: ${x.started_at} a ${x.ended_at} / ${x.reason}; depois: ${p.started_at} a ${p.ended_at} / ${reason}. Justificativa: ${justification}`);
+          x.started_at=new Date(p.started_at).toISOString();x.ended_at=new Date(p.ended_at).toISOString();x.reason=reason;break;
+        }
+        case 'create_employee':{
+          requireAdmin();const name=String(p.name||'').trim(),email=String(p.email||'').trim().toLowerCase(),rate=Number(p.rate);
+          errorIf(name.length<3||!email.includes('@')||!Number.isFinite(rate)||rate<=0||rate>100000||String(p.password||'').length<8,'Informe nome, e-mail, valor/hora e senha provisória (mín. 8 caracteres).');
+          errorIf(db.users.some(a=>a.email.toLowerCase()===email),'E-mail já cadastrado.');db.users.push({id:uid(),role:'worker',name,email,password:p.password,rate,pj_cnpj:String(p.pj_cnpj||''),active:true,must_change_password:true});audit(u,'create_employee',`Profissional ${name} cadastrado`);break;
+        }
+        case 'update_employee':{
+          requireAdmin();w=db.users.find(a=>a.id===p.id&&a.role==='worker');errorIf(!w,'Profissional não encontrado.');
+          const name=String(p.name||'').trim(),rate=Number(p.rate);errorIf(name.length<3||!Number.isFinite(rate)||rate<=0||rate>100000,'Nome ou valor inválido.');
+          const oldRate=w.rate;w.name=name;w.rate=rate;w.active=Boolean(p.active);w.pj_cnpj=String(p.pj_cnpj||'');audit(u,'update_employee',`Profissional ${name}: valor/hora de ${oldRate} para ${rate}; ativo=${w.active}`);break;
+        }
+        case 'create_admin':{
+          requireAdmin();const name=String(p.name||'').trim(),email=String(p.email||'').trim().toLowerCase();errorIf(name.length<3||!email.includes('@')||String(p.password||'').length<8,'Dados de acesso inválidos.');errorIf(db.users.some(a=>a.email===email),'E-mail já cadastrado.');
+          db.users.push({id:uid(),role:'finance',name,email,password:p.password,active:true,must_change_password:true});audit(u,'create_admin',`Acesso administrativo criado: ${name}`);break;
+        }
+        case 'reset_password':{
+          requireAdmin();w=db.users.find(a=>a.id===p.id);errorIf(!w||w.id===u.id||String(p.password||'').length<8,'Usuário ou senha inválidos.');w.password=p.password;w.must_change_password=true;audit(u,'reset_password',`Senha temporária para ${w.name}`);break;
+        }
+        case 'change_password':{
+          errorIf(u.password!==p.current_password,'A senha atual está incorreta.');errorIf(String(p.new_password||'').length<8||p.new_password===p.current_password,'Escolha uma senha nova com 8 caracteres ou mais.');u.password=p.new_password;u.must_change_password=false;audit(u,'change_password','Senha alterada');break;
+        }
+        case 'save_settings':{
+          requireAdmin();const name=String(p.company_name||'').trim(),n=Number(p.closing_day);errorIf(name.length<3||!Number.isInteger(n)||n<1||n>28,'Nome da clínica ou dia de fechamento inválido (1 a 28).');
+          errorIf(db.payouts.length>0&&n!==db.settings.closing_day,'Não é possível alterar o dia de fechamento após existir apuração aprovada sem migração administrativa.');
+          db.settings.company_name=name;db.settings.closing_day=n;audit(u,'save_settings',`Configurações atualizadas; fechamento dia ${n}`);break;
+        }
+        case 'approve_payout':{
+          requireAdmin();const wid=String(p.worker_id),key=String(p.period_key);errorIf(!/^\d{4}-\d{2}$/.test(key)||!closed(key,db.settings.closing_day),'O período ainda não fechou.');errorIf(covered(wid,key),'Apuração já aprovada.');
+          w=db.users.find(a=>a.id===wid&&a.role==='worker');errorIf(!w,'Profissional não encontrado.');const entries=db.extras.filter(e=>e.worker_id===wid&&periodFor(e.ended_at,db.settings.closing_day)===key);errorIf(!entries.length,'Não há solicitações neste período.');errorIf(entries.some(e=>e.status==='pending'),'Analise todas as solicitações pendentes antes do fechamento.');
+          const accepted=entries.filter(e=>e.status==='approved'),h=accepted.reduce((s,e)=>s+hours(e),0),v=accepted.reduce((s,e)=>s+hours(e)*e.rate_snapshot,0);
+          db.payouts.push({id:uid(),worker_id:wid,period_key:key,total_hours:h,total_amount:Math.round(v*100)/100,approved_by:u.id,approved_at:new Date().toISOString()});audit(u,'approve_payout',`Apuração ${key} aprovada para ${w.name}`);break;
+        }
+        case 'reset_demo':{errorIf(u.role!=='owner','Apenas a proprietária pode reiniciar a demonstração.');data=seed();save();return snapshot(data.users[0]);}
+        default:throw Error('Operação desconhecida.');
       }
-      save();return snapshot(user);
-    },
-    reset(){db=seed();save()}
+      save();return snapshot(u);
+    }
   };
 })();

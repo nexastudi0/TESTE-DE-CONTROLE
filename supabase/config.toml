@@ -1,0 +1,2 @@
+[functions.nexa-api]
+verify_jwt = true

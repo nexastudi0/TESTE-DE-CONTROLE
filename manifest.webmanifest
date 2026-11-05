@@ -1,8 +1,8 @@
 {
   "id": "./",
-  "name": "Nexa Vet Control",
+  "name": "Nexa Vet Control — Horas Adicionais",
   "short_name": "Nexa Vet",
-  "description": "Controle de serviços de profissionais PJ e pagamentos da clínica veterinária.",
+  "description": "Solicitação e aprovação de horas adicionais de serviço com justificativas, relatórios e cálculo financeiro.",
   "start_url": "./?source=pwa",
   "scope": "./",
   "display": "standalone",
