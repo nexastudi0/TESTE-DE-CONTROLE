@@ -1,0 +1,81 @@
+/* NEXA VET CONTROL v2.1 | 3D visual system. No time-clock features. */
+:root{--gold:#f9c65d;--gold2:#c98b2d;--surface3d:#11151e;--shine:rgba(255,215,122,.34);--depth:0 16px 40px rgba(0,0,0,.45),0 2px 2px rgba(0,0,0,.32),inset 0 1px 0 rgba(255,255,255,.075)}
+body{background:radial-gradient(ellipse 65% 50% at 100% 0%,#b8832310,transparent 74%),#080a0e}
+/* First-class app identity */
+.brand-image{background:none!important;box-shadow:none!important;border:0;overflow:visible;isolation:isolate;filter:drop-shadow(0 6px 10px #d5972830);transform:translateZ(0)}
+.brand-image img{width:100%;height:100%;display:block;object-fit:contain;border-radius:12px}
+.sidebar .brand-image{width:48px;height:48px;flex:0 0 48px}
+.auth-art>.brand .brand-image{width:56px;height:56px}
+.splash{background:radial-gradient(circle at 50% 38%,#4c351622,transparent 48%),#06070b}
+.splash-glow{background:radial-gradient(circle,rgba(251,195,84,.19),transparent 68%)}
+.splash-content{isolation:isolate;perspective:800px}
+.splash-emblem{width:170px;height:170px;margin:0 auto 22px;position:relative;display:grid;place-items:center;animation:nexaFloat 3.5s ease-in-out infinite;filter:drop-shadow(0 22px 30px #000a)}
+.splash-emblem:before{content:'';position:absolute;inset:7px;border-radius:46px;background:radial-gradient(circle,#facb6e33,transparent 67%);filter:blur(25px);transform:scale(1.45);z-index:-1}
+.splash-emblem img{width:150px;height:150px;object-fit:cover;border-radius:32px;box-shadow:0 22px 52px #000b,0 0 22px #dba54636;transform:rotateX(8deg) rotateY(-8deg)}
+.splash-name{font-size:25px;letter-spacing:6px;text-shadow:0 5px 25px #000a}
+.splash-loading{width:165px;height:3px;border-radius:99px;margin-top:32px}
+.splash-loading i{background:linear-gradient(90deg,#bb8124,#fff0b4,#e49b22);box-shadow:0 0 12px #e0a640}
+@keyframes nexaFloat{0%,100%{transform:translateY(1px)}50%{transform:translateY(-9px)}}
+/* Premium auth visual with clear legibility */
+.auth-art{background:radial-gradient(ellipse at 65% 33%,#d1971724,transparent 37%),radial-gradient(ellipse at 15% 85%,#d39d3219,transparent 50%),#0c0f16}
+.auth-art:before{content:'';position:absolute;inset:auto -20% -60% 10%;width:95%;aspect-ratio:1;border-radius:50%;background:conic-gradient(from 25deg,transparent 10%,#ffcd5735,transparent 30%,#c8891d22,transparent 70%);filter:blur(45px);pointer-events:none}
+.auth-hero{isolation:isolate}
+.auth-showpiece{position:absolute;z-index:-1;right:-45px;top:-102px;width:246px;height:246px;display:grid;place-items:center;pointer-events:none;opacity:.5;filter:drop-shadow(0 30px 50px #0009)}
+.auth-showpiece img{width:90%;height:90%;border-radius:45px;transform:rotate(-10deg) rotateY(-20deg);animation:nexaFloat 6s ease-in-out infinite}
+.auth-showpiece-ring{position:absolute;width:115%;height:115%;border:1px solid #f9bd4730;border-radius:50%;box-shadow:0 0 50px #ca8f1e0d}
+.auth-hero h1{position:relative;text-shadow:0 5px 35px #000c}
+.auth-hero h1 em{background:linear-gradient(125deg,#ffe4a1 4%,#e7ad3d 58%,#ac681c 98%);background-clip:text;-webkit-background-clip:text;color:transparent}
+.auth-form-wrap{background:radial-gradient(circle at 70% 13%,#dca03a0c,transparent 42%)}
+.auth-card{position:relative;isolation:isolate;padding:26px;border-radius:24px;background:linear-gradient(145deg,#171b2699,#0f1118b3 75%);border:1px solid #ffe4a113;box-shadow:0 36px 90px #0006,inset 0 1px 0 #ffffff0a;backdrop-filter:blur(10px)}
+.login-emblem{width:76px;height:76px;margin:0 0 15px;display:grid;place-items:center;filter:drop-shadow(0 8px 18px #e2a63b38);animation:nexaFloat 6s ease-in-out infinite}
+.login-emblem img{display:block;width:100%;height:100%;border-radius:18px;object-fit:cover}
+.auth-card .copyright{position:static;margin:22px 0 0}
+.auth-card h2{font-size:31px}
+/* Layered panels & cards */
+.stat,.panel,.person-card,.quick-btn,.mobile-extra-card,.hero-extra,.modal,.info-tile{background-image:linear-gradient(145deg,rgba(255,255,255,.035),transparent 45%),linear-gradient(155deg,#161b26,#0e1118 85%);border-color:rgba(255,218,145,.13);box-shadow:var(--depth);position:relative}
+.stat,.person-card,.quick-btn,.mobile-extra-card,.hero-extra,.panel{transform-style:preserve-3d;will-change:auto;transition:border-color .25s ease,box-shadow .25s ease,transform .25s ease}
+.stat:before,.person-card:before,.quick-btn:before,.hero-extra:before,.panel:before,.mobile-extra-card:before{content:'';position:absolute;inset:0 0 auto;height:1px;background:linear-gradient(90deg,transparent,#ffe3ae40,transparent);border-radius:inherit;pointer-events:none}
+.stat:hover,.person-card:hover,.quick-btn:hover,.hero-extra:hover,.mobile-extra-card:hover{border-color:#f4bd575c;box-shadow:0 25px 50px #0009,0 0 32px #b9771e11,inset 0 1px 0 #ffe6b428}
+.stat{overflow:hidden}
+.stat .stat-icon{background:linear-gradient(145deg,#77541a5c,#2a241b77);border:1px solid #f6b84c2f;box-shadow:inset 0 1px 0 #ffce7046,0 5px 13px #0006;color:#ffd77d;transform:translateZ(10px)}
+.stat .val{color:#fff6e4;text-shadow:0 3px 12px #0006;transform:translateZ(7px)}
+.stat .desc{transform:translateZ(5px)}
+.panel-header{background:linear-gradient(90deg,#f6bb3d08,transparent 70%)}
+.quick-btn svg{filter:drop-shadow(0 3px 7px #ffb73b3b)}
+.person-card .avatar,.avatar,.hero-extra-icon-3d{box-shadow:inset 0 1px 0 #fff4b48a,0 8px 18px #0008,0 0 18px #d9941a1f}
+.hero-extra{background:radial-gradient(ellipse at 5% 10%,#f6c05b18,transparent 44%),linear-gradient(112deg,#292015,#161921 62%,#11141c);border:1px solid #f7c56e66;box-shadow:0 24px 60px #0007,inset 0 1px 0 #ffe5ae24}
+.hero-extra-icon-3d{width:73px;height:73px;border:0;background:none;box-shadow:none;overflow:visible}
+.hero-extra-icon-3d img{width:100%;height:100%;object-fit:contain;border-radius:17px;filter:drop-shadow(0 9px 14px #0008)}
+.hero-extra h2{color:#fff0cf}
+/* 3D, tactile controls */
+.btn{position:relative;isolation:isolate;overflow:hidden;box-shadow:0 5px 11px #0006,inset 0 1px 0 #ffffff1c;transition:transform .16s ease,box-shadow .18s ease,border-color .18s ease,background .18s ease}
+.btn-primary{background:linear-gradient(155deg,#ffe7a1 0%,#efb74c 38%,#b87b21 100%);border-color:#f8d2849e;box-shadow:0 6px 0 #855619,0 12px 26px #0006,inset 0 1px 0 #fff8d2,0 -1px 2px #c68b23;color:#1a1107}
+.btn-primary:hover:not(:disabled){background:linear-gradient(155deg,#fff1c1,#ffd06c 45%,#dca035);box-shadow:0 8px 0 #855619,0 16px 27px #0008,inset 0 1px 0 #fff9d6;transform:translateY(-2px)}
+.btn-primary:active:not(:disabled){transform:translateY(3px);box-shadow:0 2px 0 #855619,0 4px 10px #0007,inset 0 1px 0 #fff9d6}
+.btn-outline{border-color:#e6bc663b;background:linear-gradient(180deg,#272a33,#141821);box-shadow:0 4px 12px #0006,inset 0 1px 0 #ffffff0d}
+.btn-outline:hover:not(:disabled){border-color:#fac86e75}
+.btn:active:not(:disabled),.nav-item:active,.app-tab:active,.quick-btn:active{transform:translateY(1px) scale(.99)}
+.btn:focus-visible,.nav-item:focus-visible,.app-tab:focus-visible,.quick-btn:focus-visible{outline:2px solid #ffd581;outline-offset:3px}
+.fx-ripple{position:absolute;z-index:5;border-radius:50%;width:20px;height:20px;pointer-events:none;background:rgba(255,255,255,.38);transform:translate(-50%,-50%) scale(0);animation:fxRipple .65s ease-out forwards}
+@keyframes fxRipple{to{transform:translate(-50%,-50%) scale(20);opacity:0}}
+/* Dimensional mobile nav */
+.sidebar{background:linear-gradient(180deg,#10141d,#0b0d13);border-right:1px solid #e1a84e1b;box-shadow:10px 0 35px #0004}
+.nav-item{transition:background .22s ease,color .22s ease,transform .15s ease,box-shadow .22s ease}
+.nav-item.active{background:linear-gradient(110deg,#e0a83423,#edbc5010);border:1px solid #e8b85832;box-shadow:inset 3px 0 0 #ffd47e,0 5px 16px #0004;color:#ffd37e}
+.nav-item:hover{transform:translateX(2px)}
+.topbar{background:linear-gradient(180deg,#0e1118f5,#080a0df2);border-bottom-color:#e3ba5b18;box-shadow:0 10px 24px #0002}
+.top-time{border-color:#cda45528;background:linear-gradient(160deg,#20232c,#11131b);box-shadow:inset 0 1px 0 #ffffff0a,0 3px 10px #0004}
+.app-tabs{box-shadow:0 -8px 38px #0009!important;border-top-color:#ffd27e43!important;background:linear-gradient(180deg,#1b1e27ee,#0c1019fa)!important}
+.app-tab.active{background:linear-gradient(140deg,#eab95030,#eab9500c)!important;color:#ffe0a0!important;box-shadow:inset 0 1px 0 #ffdfa02b,0 4px 10px #0003}
+.app-tab:active{transform:scale(.96)}
+/* Inputs and dialogs */
+input,select,textarea{background:linear-gradient(180deg,#10131a,#1a1e28);box-shadow:inset 0 2px 7px #0005,inset 0 1px 0 #ffffff08}
+input:focus,select:focus,textarea:focus{box-shadow:0 0 0 3px #dcb04a22,inset 0 1px 3px #0004,0 0 20px #d1a33d12}
+.modal{box-shadow:0 38px 110px #000c,inset 0 1px 0 #fbe0a71b;background-image:radial-gradient(ellipse at 80% -20%,#ffbd4a0b,transparent 58%),linear-gradient(150deg,#191d27,#0e1118)}
+.pill{border:1px solid #ffffff12;box-shadow:inset 0 1px 0 #ffffff18,0 3px 8px #0004}
+/* Hover depth only when supported; phones remain stable. */
+@media(hover:hover) and (pointer:fine){.fx-tilt{transition:transform .16s ease,box-shadow .2s ease,border-color .2s ease;transform:perspective(1000px) rotateX(var(--tilt-x,0deg)) rotateY(var(--tilt-y,0deg)) translateZ(0)}.fx-tilt:hover{z-index:3}}
+@media(max-width:900px){.auth-card{max-width:460px}.stat,.panel,.person-card,.quick-btn,.mobile-extra-card,.hero-extra{transform:none!important}.sidebar .brand-image{height:46px;width:46px}.hero-extra-icon-3d{width:62px;height:62px}.auth-showpiece{right:0;top:-35px;width:170px;height:170px;opacity:.28}.auth-hero h1{position:relative}}
+@media(max-width:620px){.auth-card{padding:21px 17px;border-radius:21px}.auth-hero h1{font-size:30px;letter-spacing:-1px}.auth-showpiece{right:-13px;top:-18px;width:124px;height:124px;opacity:.22}.auth-art>.brand .brand-image{height:43px;width:43px}.login-emblem{height:61px;width:61px;margin-bottom:11px}.hero-extra-icon-3d{height:58px;width:58px}.splash-emblem{width:146px;height:146px}.splash-emblem img{width:135px;height:135px;border-radius:28px}.splash-name{font-size:20px;letter-spacing:4px}.splash-sub{letter-spacing:1.8px;font-size:9px}.auth-card .copyright{font-size:10px}}
+@media(prefers-reduced-motion:reduce){.splash-emblem,.login-emblem,.auth-showpiece img{animation:none!important}.fx-ripple{display:none!important}.fx-tilt{transform:none!important}.stat,.panel,.person-card,.quick-btn,.hero-extra{transition:none!important}}
+@media print{.stat,.panel,.person-card,.hero-extra{box-shadow:none!important;transform:none!important}body{background:#fff!important}}

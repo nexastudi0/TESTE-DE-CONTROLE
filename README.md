@@ -1,4 +1,4 @@
-# NEXA VET CONTROL 2.0 — HORAS ADICIONAIS
+# NEXA VET CONTROL 2.1 — HORAS ADICIONAIS
 
 **Nova finalidade:** controlar SOMENTE pedidos de horas adicionais de serviços realizados por profissionais PJ. Este projeto **não registra ponto**, não registra jornada diária, não usa PIN, câmera, fotos ou terminal de recepção.
 
@@ -7,6 +7,8 @@
 **Profissionais:** login pessoal, troca obrigatória de senha no primeiro acesso, novo pedido de horas adicionais com início e fim e **motivo obrigatório (mínimo 15 caracteres)**; histórico próprio, acompanhamento de pendência, aprovação ou recusa, sem acesso aos valores de outros usuários nem à tarifa individual.
 
 **Proprietária e financeiro:** logins separados com a mesma permissão administrativa; cadastro/inativação de prestadores, valores/hora individuais, criação e redefinição de credenciais, aprovação/recusa dos pedidos, correções justificadas e auditadas, filtros, relatórios, CSV, impressão em PDF, dia de fechamento configurável (de 1 a 28) e aprovação da apuração mensal por profissional. O cálculo considera **apenas pedidos aprovados**. A tarifa da solicitação fica congelada no instante do pedido; alterações posteriores de tarifa não recalculam o passado.
+
+**Visual 3D (v2.1):** ícone dourado 3D como splash, identidade do login e ícone da tela inicial do app (Android/iOS); botões com profundidade, cards com acabamento metalizado, transições, reflexos e movimento sutil no computador. Os efeitos respeitam a preferência de movimento reduzido e não alteram as regras de horas adicionais.
 
 **PWA:** layout responsivo com menu de navegação móvel, splash da Nexa Studio e instalação via Chrome no Android ou Safari no iPhone/iPad, após publicação em HTTPS. O cache serve apenas os arquivos públicos da interface; sem internet o servidor não aceita novas solicitações.
 
@@ -50,7 +52,7 @@ values (
 5. Configure a origem do frontend publicado (HTTPS) para CORS: `supabase secrets set APP_ORIGIN="https://seu-dominio.com"` (sem barra final). As variáveis internas `SUPABASE_URL`, `SUPABASE_SERVICE_ROLE_KEY` e `SUPABASE_ANON_KEY` precisam existir no ambiente da função. **Jamais publique a service role no frontend.**
 6. Na pasta que contém `supabase/`, rode `supabase functions deploy nexa-api`. O arquivo `supabase/config.toml` mantém a verificação de JWT ativada.
 7. Configure `config.js` com a URL do projeto, sua chave **publishable/anon** e `functionName: 'nexa-api'`. A chave publishable pode ficar no cliente; a chave service role, **nunca**.
-8. Publique **somente a interface** (`index.html`, `styles.css`, `extra.css`, `app.js`, `demo.js`, `config.js`, `sw.js`, `manifest.webmanifest` e `assets/`) em hospedagem HTTPS. Depois entre como dona e cadastre o financeiro e os profissionais.
+8. Publique **somente a interface** (`index.html`, `styles.css`, `extra.css`, `effects3d.css`, `effects3d.js`, `app.js`, `demo.js`, `config.js`, `sw.js`, `manifest.webmanifest` e `assets/`) em hospedagem HTTPS. Depois entre como dona e cadastre o financeiro e os profissionais.
 
 ### Permissões e confidencialidade dos valores
 
@@ -78,7 +80,7 @@ Como os profissionais são **PJs**, o projeto usa “horas adicionais de serviç
 
 ```text
 nexa-vet-control/
-├── index.html, styles.css, extra.css
+├── index.html, styles.css, extra.css, effects3d.css, effects3d.js
 ├── app.js                 # interface, validações e fluxos
 ├── demo.js                # demonstração fictícia local
 ├── config.js              # URL e chave pública
@@ -88,4 +90,8 @@ nexa-vet-control/
 └── supabase/functions/nexa-api/index.ts
 ```
 
-**Nexa Studio — 2026. Versão 2.0 — Solicitações de horas adicionais.**
+**Nexa Studio — 2026. Versão 2.1 — Solicitações de horas adicionais.**
+
+## Atualização do ícone no celular
+
+A versão 2.1 usa a arte 3D como ícone de lançamento, splash e identidade de telas. Depois de atualizar a hospedagem HTTPS, abra o site, atualize a página e, se o Android/iPhone ainda mostrar o ícone antigo, remova o atalho/app instalado e instale novamente pela opção de compartilhar/adicionar à tela de início. Como o PWA usa service worker, confira se `sw.js` também foi enviado. A demonstração local continua com dados fictícios.

@@ -2,7 +2,7 @@
   "id": "./",
   "name": "Nexa Vet Control — Horas Adicionais",
   "short_name": "Nexa Vet",
-  "description": "Solicitação e aprovação de horas adicionais de serviço com justificativas, relatórios e cálculo financeiro.",
+  "description": "Controle de horas adicionais de serviço — agora com identidade 3D Nexa Studio.",
   "start_url": "./?source=pwa",
   "scope": "./",
   "display": "standalone",
@@ -18,6 +18,12 @@
     "productivity"
   ],
   "icons": [
+    {
+      "src": "assets/icon-96.png",
+      "type": "image/png",
+      "sizes": "96x96",
+      "purpose": "any"
+    },
     {
       "src": "assets/icon-192.png",
       "type": "image/png",

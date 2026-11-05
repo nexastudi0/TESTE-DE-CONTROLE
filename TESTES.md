@@ -29,3 +29,13 @@
 - [ ] Revisão jurídica e contábil do contrato de serviços PJ concluída.
 
 **Não considerar o ambiente em produção até concluir os testes de integração.**
+
+## Checklist visual v2.1
+
+- [ ] Splash exibe o ícone dourado 3D.
+- [ ] Login e menus exibem a marca 3D sem cortes.
+- [ ] Solicitação de horas adicionais permanece funcional.
+- [ ] Administração consegue analisar, corrigir e aprovar solicitações.
+- [ ] Menu móvel e botões continuam acessíveis.
+- [ ] PWA usa novos ícones, inclusive maskable, depois de reinstalar.
+- [ ] Efeitos não interferem com a opção de movimento reduzido.
